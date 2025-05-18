@@ -42,6 +42,11 @@ function guardarArchivo(nombre, contenido) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ nombre, contenido })
   }).then(res => res.json()).then(data => {
-    if (data.ok) alert("Archivo guardado");
+    if (data.ok) {
+      alert("Archivo guardado");
+      if (document.getElementById('fileManagerWindow')?.style.display !== 'none') {
+        openFileManager();        // refresca la lista
+      }
+    }
   });
 }

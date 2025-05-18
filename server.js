@@ -51,9 +51,16 @@ app.post('/guardar', (req, res) => {
 
 // Lista de archivos disponibles
 app.get('/listar', (req, res) => {
+  console.log('📂 Leyendo dir:', FILES_DIR);
   fs.readdir(FILES_DIR, (err, files) => {
-    if (err) return res.status(500).send('Error al listar archivos');
-    res.json(files.filter(f => f.endsWith('.txt')));
+    if (err) {
+      console.error('❌ Error en readdir:', err);
+      return res.status(500).send('Error al listar archivos');
+    }
+    console.log('📝 Archivos encontrados:', files);
+    const txtFiles = files.filter(f => f.endsWith('.txt'));
+    console.log('📄 Filtrados .txt:', txtFiles);
+    res.json(txtFiles);
   });
 });
 

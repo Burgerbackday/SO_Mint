@@ -49,29 +49,32 @@ const windowsRegistry = {
     id: 'musicPlayerWindow',
     title: 'Reproductor',
     body: `
-      <div id="currentSong" style="margin-bottom:6px;">--</div>
+      <div class="retro-player">
 
-      <select id="playlistSelect" onchange="loadSelectedSong()" style="width:100%; margin-bottom:6px;"></select>
+        <div id="currentSong" style="margin-bottom:6px;">--</div>
 
-      <div style="margin-bottom:6px; display:flex; gap:4px;">
-        <button id="playPauseBtn" class="retro-btn-play" onclick="togglePlayPause()"></button>
-        <button class="retro-btn-next" onclick="nextMusic()"></button>
-        <button class="retro-btn-prev" onclick="prevMusic()"></button>
-        <button onclick="toggleShuffle()">🔀</button>
-        <button onclick="toggleLoop()">🔁</button>
+        <select id="playlistSelect" onchange="loadSelectedSong()" style="width:100%; margin-bottom:6px;"></select>
+
+        <div class="controls" style="margin-bottom:6px; display:flex; gap:4px;">
+          <button id="playPauseBtn" class="retro-btn-play" onclick="togglePlayPause()"></button>
+          <button class="retro-btn-next" onclick="nextMusic()"></button>
+          <button class="retro-btn-prev" onclick="prevMusic()"></button>
+          <button onclick="toggleShuffle()">🔀</button>
+          <button onclick="toggleLoop()">🔁</button>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:4px;">
+          <span>🎵</span>
+          <input type="range" id="progressBar" value="0" class="slider">
+        </div>
+
+        <div style="display:flex;align-items:center;gap:4px;margin-top:4px;">
+          <span>🔊</span>
+          <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="1" class="slider">
+        </div>
+
+        <audio id="audioElement" style="display:none;"></audio>
       </div>
-
-      <div style="display:flex;align-items:center;gap:4px;">
-        <span>🎵</span>
-        <input type="range" id="progressBar" value="0" class="slider">
-      </div>
-
-      <div style="display:flex;align-items:center;gap:4px;margin-top:4px;">
-        <span>🔊</span>
-        <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="1" class="slider">
-      </div>
-
-      <audio id="audioElement" style="display:none;"></audio>
     `
   },
   taskManager: {
@@ -86,9 +89,25 @@ const windowsRegistry = {
     id: 'fileManagerWindow',
     title: 'Archivos',
     body: `
-      <div id="fileList"></div>
-      <button onclick="openSelectedFile()">Abrir</button>
-      <button onclick="createNewFile()">Nuevo</button>
+      <div class="fm-window">
+
+        <div class="fm-sidebar" id="fmSidebar">
+          <div class="fm-tree-item active">Carpeta personal</div>
+          <div class="fm-tree-item">Sistema de archivos</div>
+        </div>
+
+        <div class="fm-main">
+          <div class="fm-toolbar">
+            <button class="fm-btn" onclick="fmBack()">◀</button>
+            <button class="fm-btn" onclick="fmForward()">▶</button>
+            <input id="fmPath" class="fm-path" value="/home/usuario" readonly>
+            <button class="fm-btn" onclick="fmRefresh()">🔄</button>
+          </div>
+
+          <div class="fm-content" id="fileList"></div>
+        </div>
+
+      </div>
     `
   }
 };
@@ -132,6 +151,30 @@ function renderWindow(key) {
     win.style.top  = (ev.clientY - offY) + 'px';
   });
   document.addEventListener('mouseup', () => dragging = false);
+
+  /* ───── Redimensionar desde esquina ───── */
+  const resizer = win.querySelector('.resize-handle');
+  let resizing = false, startX, startY, startW, startH;
+
+  resizer.addEventListener('mousedown', ev => {
+    ev.stopPropagation();
+    resizing = true;
+    startX = ev.clientX;
+    startY = ev.clientY;
+    const rect = win.getBoundingClientRect();
+    startW = rect.width;
+    startH = rect.height;
+  });
+
+  document.addEventListener('mousemove', ev => {
+    if (!resizing) return;
+    const newW = Math.max(300, startW + (ev.clientX - startX));
+    const newH = Math.max(200, startH + (ev.clientY - startY));
+    win.style.width  = newW + 'px';
+    win.style.height = newH + 'px';
+  });
+
+  document.addEventListener('mouseup', () => resizing = false);
 
   /* ───── Inicializadores específicos ───── */
   if (key === 'calendar'    && typeof window.drawCalendar    === 'function') window.drawCalendar();

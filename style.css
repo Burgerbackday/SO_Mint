@@ -288,3 +288,84 @@ input[type="password"] {
   border-radius: 50%;
   cursor: pointer;
 }
+
+/* ─── File‑Manager estilo Mint ─── */
+
+.fm-window {
+  display: flex;
+  height: 480px;
+  width: 660px;
+  background:#d4d4d4;
+  border: 4px solid #bfbfbf;
+  box-shadow: inset 0 0 0 2px #8a8a8a;
+  font-family: "Noto Sans", sans-serif;
+  color:#1e1e1e;
+}
+
+.fm-sidebar {
+  width: 160px;
+  background:#404940;
+  padding:8px 4px;
+  color:#d9e6d9;          /* verde muy claro */
+}
+
+.fm-tree-item {
+  padding:6px 8px;
+  border-radius:4px;
+  cursor:pointer;
+}
+.fm-tree-item:hover { background:#566156; }
+.fm-tree-item.active{ background:#7fa96c; color:#fff; }
+
+.fm-main { flex:1; display:flex; flex-direction:column; }
+
+.fm-toolbar{
+  background:#e5e5e5;
+  padding:4px;
+  display:flex;
+  gap:4px;
+  align-items:center;
+  border-bottom:2px solid #bfbfbf;
+}
+
+.fm-btn {
+  width:28px; height:24px;
+  background:#ffffff;
+  border:1px solid #7f7f7f;
+  cursor:pointer;
+}
+
+.fm-path {
+  flex:1;
+  height:22px;
+  border:1px solid #bdbdbd;
+  background:#fff;
+  padding-left:4px;
+  font-size:12px;
+}
+
+.fm-content{
+  flex:1;
+  background:#ffffff;
+  padding:8px;
+  overflow:auto;
+  display:flex;
+  flex-wrap:wrap;
+  gap:16px;
+}
+.fm-content .fm-item{
+  width:64px; text-align:center; font-size:12px; color:#1e1e1e;
+}
+.fm-content .fm-item img{ width:48px; height:48px; }
+
+/* ─── Manija de redimensionado ─── */
+.resize-handle {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 14px;
+  height: 14px;
+  cursor: nwse-resize;
+  background: #666;
+  border-radius: 2px;
+}
