@@ -1,0 +1,471 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  
+  <meta charset="UTF-8">
+  <title>Escritorio Linux Mint Completo</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+  margin: 0;
+  height: 100vh;
+  background: url("assets/background.jpg") no-repeat center center fixed;
+  background-size: cover;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  overflow: hidden;
+}
+    .taskbar {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 40px;
+      background: rgba(20, 20, 20, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      color: white;
+      z-index: 10;
+    }
+    .menu {
+      background-color: rgba(0, 100, 0, 0.9);
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .menu-panel {
+      position: absolute;
+      bottom: 45px;
+      left: 10px;
+      background-color: rgba(40, 40, 40, 0.95);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      width: 200px;
+      display: none;
+      box-shadow: 0 0 10px #000;
+      z-index: 11;
+    }
+    .menu-panel div {
+      padding: 5px;
+      cursor: pointer;
+    }
+    .menu-panel div:hover {
+      background-color: rgba(100, 255, 100, 0.2);
+    }
+    .app-icon {
+  width: 60px;
+  height: 60px;
+  background-color: rgba(255,255,255,0.2);
+  border-radius: 10px;
+  margin: 20px;
+  text-align: center;
+  color: white;
+  padding-top: 10px;
+  cursor: grab;
+  position: absolute; /* ← Importante para poder moverlos */
+}
+    .desktop {
+      position: relative;
+      padding: 20px;
+    }
+    .clock {
+      font-size: 1rem;
+    }
+    .window {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  width: 500px;
+  height: 300px;
+  background-color: #111;
+  border-radius: 8px;
+  color: #0f0;
+  display: none;
+  flex-direction: column;
+  /* box-shadow: 0 0 15px #0f0; ← COMENTADA O QUITADA */
+  box-shadow: none; /* o una sombra gris suave */
+  z-index: 5;
+}
+    .window-header {
+      background-color: #222;
+      padding: 5px 10px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      color: #fff;
+    }
+    .window-body {
+  flex: 1;
+  overflow: auto;
+  padding: 10px;
+}
+    .close-btn {
+      color: red;
+      cursor: pointer;
+    }
+    .terminal {
+  background-color: #111;
+  color: #0f0;
+  padding: 10px;
+  font-family: monospace;
+  height: 300px;
+  overflow-y: auto;
+}
+
+#terminal-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #0f0;
+  font-family: monospace;
+  font-size: 1em;
+  outline: none;
+}
+    .calc-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+    }
+    .calc-buttons button {
+      padding: 10px;
+      font-size: 1rem;
+      background-color: #333;
+      color: #0f0;
+      border: none;
+      cursor: pointer;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      text-align: center;
+    }
+    .calendar-grid div {
+      padding: 5px;
+      background-color: #222;
+    }
+    .start-icon {
+  height: 28px;
+  width: 28px;
+  object-fit: contain;
+  display: block;
+}
+#terminalOutput {
+  max-height: 100%;
+  overflow-y: auto;
+  white-space: pre-wrap; /* permite saltos de línea correctos */
+  word-break: break-word;
+  font-family: monospace;
+}
+.resize-handle {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  right: 0;
+  bottom: 0;
+  cursor: nwse-resize;
+  background: transparent;
+}
+.htop-body {
+  background-color: #1e1e1e;
+  color: #00ff00;
+  font-family: monospace;
+  font-size: 12px;
+  padding: 10px;
+  overflow-y: auto;
+  height: calc(100% - 40px);
+  white-space: pre;
+  border-top: 1px solid #444;
+}
+
+.htop-header {
+  color: #00ffff;
+  font-weight: bold;
+}
+
+.htop-row {
+  border-bottom: 1px dotted #444;
+  padding: 2px 0;
+}
+  </style>
+</head>
+<body>
+
+<div class="desktop">
+  <div class="app-icon" onclick="openTaskManager()" style="top: 360px; left: 40px;">🧠<br>TaskMgr</div>
+  <div class="app-icon" onclick="openWindow('terminalWindow')" style="top: 40px; left: 40px;">🖥️<br>Terminal</div>
+<div class="app-icon" onclick="openWindow('notepadWindow')" style="top: 120px; left: 40px;">📝<br>Notas</div>
+<div class="app-icon" onclick="openWindow('calcWindow')" style="top: 200px; left: 40px;">🧮<br>Calculadora</div>
+<div class="app-icon" onclick="openWindow('calendarWindow')" style="top: 280px; left: 40px;">📅<br>Calendario</div>
+</div>
+
+<div class="taskbar">
+  <div class="menu" onclick="toggleMenu()">
+    <img src="assets/start_button.png" alt="Inicio" class="start-icon">
+  </div>
+
+  <div id="taskButtonsContainer" style="display: flex; gap: 5px;"></div>
+
+  <div class="clock" id="clock"></div>
+</div>
+
+<div class="menu-panel" id="menuPanel">
+  
+  <div onclick="openTaskManager()">🧠 TaskMgr</div>
+  <div onclick="openWindow('terminalWindow')">🖥️ Terminal</div>
+  <div onclick="openWindow('notepadWindow')">📝 Bloc de Notas</div>
+  <div onclick="openWindow('calcWindow')">🧮 Calculadora</div>
+  <div onclick="openWindow('calendarWindow')">📅 Calendario</div>
+</div>
+
+<!-- Terminal -->
+<div class="window" id="terminalWindow">
+  <div class="window-header">
+    <span>Terminal</span><span class="close-btn" onclick="closeWindow('terminalWindow')">✖</span>
+  </div>
+  <div class="window-body" id="terminalOutput">usuario@mint:~$<br></div>
+  <input type="text" class="terminal-input" id="terminalInput" placeholder="Escriba un comando">
+  <div class="resize-handle"></div>
+</div>
+
+
+
+
+
+
+<!-- Task Manager -->
+<div class="window" id="taskManagerWindow" style="display: none; width: 700px; height: 400px;">
+  <div class="window-header">
+    <span>htop</span><span class="close-btn" onclick="closeWindow('taskManagerWindow')">✖</span>
+  </div>
+  <div class="window-body htop-body" id="htopOutput">
+    <!-- Aquí se generará el contenido por JS -->
+  </div>
+</div>
+
+<!-- Notas -->
+<div class="window" id="notepadWindow">
+  <div class="window-header">
+    <span>Bloc de Notas</span><span class="close-btn" onclick="closeWindow('notepadWindow')">✖</span>
+  </div>
+  <textarea placeholder="Escribe tus notas aquí..."></textarea>
+  <div class="resize-handle"></div>
+</div>
+
+
+
+<!-- Calculadora -->
+<div class="window" id="calcWindow">
+  <div class="window-header">
+    <span>Calculadora</span><span class="close-btn" onclick="closeWindow('calcWindow')">✖</span>
+  </div>
+  <div class="window-body">
+    <input type="text" id="calcDisplay" class="terminal-input" readonly>
+    <div class="calc-buttons">
+      <button onclick="appendCalc('7')">7</button><button onclick="appendCalc('8')">8</button><button onclick="appendCalc('9')">9</button><button onclick="appendCalc('/')">/</button>
+      <button onclick="appendCalc('4')">4</button><button onclick="appendCalc('5')">5</button><button onclick="appendCalc('6')">6</button><button onclick="appendCalc('*')">*</button>
+      <button onclick="appendCalc('1')">1</button><button onclick="appendCalc('2')">2</button><button onclick="appendCalc('3')">3</button><button onclick="appendCalc('-')">-</button>
+      <button onclick="appendCalc('0')">0</button><button onclick="appendCalc('.')">.</button><button onclick="calculateCalc()">=</button><button onclick="appendCalc('+')">+</button>
+      <button onclick="clearCalc()" style="grid-column: span 4;">C</button>
+    </div>
+  </div>
+  <div class="resize-handle"></div>
+</div>
+
+<!-- Calendario -->
+<div class="window" id="calendarWindow">
+  <div class="window-header">
+    <span>Calendario</span><span class="close-btn" onclick="closeWindow('calendarWindow')">✖</span>
+  </div>
+  <div class="window-body" id="calendarBody"></div>
+  <div class="resize-handle"></div>
+</div>
+
+<script>
+function toggleMenu() {
+  const panel = document.getElementById("menuPanel");
+  panel.style.display = panel.style.display === "block" ? "none" : "block";
+}
+function openWindow(id) {
+  document.getElementById(id).style.display = "flex";
+  if (id === "terminalWindow") setTimeout(() => document.getElementById("terminalInput").focus(), 100);
+  updateTaskbarButtons();
+}
+function closeWindow(id) {
+  document.getElementById(id).style.display = "none";
+  updateTaskbarButtons();
+}
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').innerText = now.toLocaleTimeString();
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Terminal
+
+// Calculadora
+let calcValue = "";
+function appendCalc(val) {
+  calcValue += val;
+  document.getElementById("calcDisplay").value = calcValue;
+}
+function calculateCalc() {
+  try {
+    calcValue = eval(calcValue).toString();
+  } catch {
+    calcValue = "Error";
+  }
+  document.getElementById("calcDisplay").value = calcValue;
+}
+function clearCalc() {
+  calcValue = "";
+  document.getElementById("calcDisplay").value = "";
+}
+
+// Calendario
+function drawCalendar() {
+  const body = document.getElementById("calendarBody");
+  const now = new Date();
+  const days = ["D", "L", "M", "M", "J", "V", "S"];
+  const first = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
+  const last = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+  body.innerHTML = '<div class="calendar-grid">' + days.map(d => "<div><b>" + d + "</b></div>").join("");
+  for (let i = 0; i < first; i++) body.innerHTML += "<div></div>";
+  for (let i = 1; i <= last; i++) body.innerHTML += "<div>" + i + "</div>";
+  body.innerHTML += "</div>";
+}
+drawCalendar();
+// Funcionalidad para hacer arrastrables las ventanas
+document.querySelectorAll('.window').forEach(windowEl => {
+  const header = windowEl.querySelector('.window-header');
+  let isDragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  header.style.cursor = "move";
+
+  header.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    offsetX = e.clientX - windowEl.offsetLeft;
+    offsetY = e.clientY - windowEl.offsetTop;
+    windowEl.style.zIndex = 100;
+    e.preventDefault(); // prevenir selección de texto
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+
+    const newLeft = e.clientX - offsetX;
+    const newTop = e.clientY - offsetY;
+
+    const maxLeft = window.innerWidth - windowEl.offsetWidth;
+    const maxTop = window.innerHeight - windowEl.offsetHeight;
+
+    // Limitar los bordes para que no se salgan
+    windowEl.style.left = Math.max(0, Math.min(newLeft, maxLeft)) + 'px';
+    windowEl.style.top = Math.max(0, Math.min(newTop, maxTop)) + 'px';
+  });
+
+  document.addEventListener('mouseup', () => {
+    isDragging = false;
+  });
+});
+
+// Funcionalidad para arrastrar íconos del escritorio
+document.querySelectorAll('.app-icon').forEach(icon => {
+  let isDragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  icon.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    offsetX = e.clientX - icon.offsetLeft;
+    offsetY = e.clientY - icon.offsetTop;
+    icon.style.zIndex = 99;
+    icon.style.cursor = "grabbing";
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+
+    const newLeft = e.clientX - offsetX;
+    const newTop = e.clientY - offsetY;
+
+    const maxLeft = window.innerWidth - icon.offsetWidth;
+    const maxTop = window.innerHeight - icon.offsetHeight - 50; // dejar espacio para la barra de tareas
+
+    icon.style.left = Math.max(0, Math.min(newLeft, maxLeft)) + 'px';
+    icon.style.top = Math.max(0, Math.min(newTop, maxTop)) + 'px';
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (isDragging) {
+      isDragging = false;
+      icon.style.cursor = "grab";
+    }
+  });
+});
+
+// Funcionalidad para redimensionar ventanas
+document.querySelectorAll('.resize-handle').forEach(handle => {
+  const windowEl = handle.parentElement;
+  let isResizing = false;
+
+  handle.addEventListener('mousedown', (e) => {
+    isResizing = true;
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isResizing) return;
+
+    const newWidth = e.clientX - windowEl.offsetLeft;
+    const newHeight = e.clientY - windowEl.offsetTop;
+    
+    windowEl.style.width = Math.max(200, newWidth) + 'px';
+    windowEl.style.height = Math.max(150, newHeight) + 'px';
+  });
+
+  document.addEventListener('mouseup', () => {
+    isResizing = false;
+  });
+});
+function updateTaskbarButtons() {
+  const container = document.getElementById('taskButtonsContainer');
+  container.innerHTML = '';
+
+  const windows = document.querySelectorAll('.window');
+  windows.forEach(win => {
+    const id = win.id;
+    const title = win.querySelector('.window-header span')?.textContent || id;
+    if (win.style.display !== 'none') {
+      const btn = document.createElement('button');
+      btn.textContent = title;
+      btn.style.padding = '3px 8px';
+      btn.style.background = '#333';
+      btn.style.color = '#0f0';
+      btn.style.border = '1px solid #0f0';
+      btn.style.borderRadius = '4px';
+      btn.style.cursor = 'pointer';
+      btn.onclick = () => {
+        // Alternar visibilidad (minimizar si ya está al frente)
+        if (win.style.display !== 'none') {
+          win.style.display = 'none';
+        } else {
+          openWindow(id);
+        }
+        updateTaskbarButtons(); // actualiza la barra
+      };
+      container.appendChild(btn);
+    }
+  });
+}
+
+</script>
+<script src="taskmanager.js"></script>
+<script src="terminal.js"></script>
+</body>
+</html>

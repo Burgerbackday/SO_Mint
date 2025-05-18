@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Inicio de Sesión</title>
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+  <div id="hora">00:00</div>
+  <div id="fecha">Fecha</div>
+
+  <div class="login-box">
+    <div class="avatar"></div>
+    <div class="nombre-usuario">Administrador</div>
+    <div>
+      <input type="password" id="contrasena" placeholder="Contraseña" autocomplete="current-password">
+      <button class="btn-login" onclick="iniciarSesion()">⮞</button>
+    </div>
+    <div id="error" class="error"></div>
+    <div class="login-controls">
+      <div class="control" title="Reposo">💤<br>Reposo</div>
+      <div class="control" title="Reiniciar">🔄<br>Reiniciar</div>
+      <div class="control" title="Apagar">⏻<br>Apagar</div>
+      <div class="control" title="Otros">🖥️<br>Otros</div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { validarCredenciales } from './auth/auth.js';
+
+    function mostrarFechaHora() {
+      const hoy = new Date();
+      const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById("hora").textContent = hoy.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      document.getElementById("fecha").textContent = hoy.toLocaleDateString('es-ES', opcionesFecha);
+      setTimeout(mostrarFechaHora, 1000);
+    }
+
+    window.onload = mostrarFechaHora;
+
+    function iniciarSesion() {
+      const usuario = "admin"; // Aquí podrías permitir que se elija usuario si lo deseas
+      const pass = document.getElementById("contrasena").value;
+      const errorBox = document.getElementById("error");
+
+      if (validarCredenciales(usuario, pass)) {
+        window.location.href = "index.html";
+      } else {
+        errorBox.textContent = "Contraseña incorrecta.";
+      }
+    }
+
+    window.iniciarSesion = iniciarSesion;
+  </script>
+</body>
+</html>

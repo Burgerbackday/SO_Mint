@@ -1,0 +1,12 @@
+[
+  {
+    "usuario": "admin",
+    "contrasena": "1234",
+    "rol": "administrador"
+  },
+  {
+    "usuario": "invitado",
+    "contrasena": "abcd",
+    "rol": "invitado"
+  }
+]

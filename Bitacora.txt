@@ -1,0 +1,76 @@
+📄 Bitácora del Proyecto - Simulador de Sistema Operativo Web
+
+🎯 Objetivos Base:
+
+1. Estética tipo Linux:
+   - La interfaz gráfica simulará el entorno visual de una distribución Linux.
+   - Se usará un diseño limpio con inspiración en escritorios como GNOME, XFCE o KDE.
+
+2. Gestión de usuarios y permisos:
+   - El sistema permitirá el inicio de sesión mediante usuario y contraseña.
+   - Habrá validación básica de credenciales.
+   - Los usuarios tendrán permisos que limiten o habiliten funciones (por ejemplo, administrador vs usuario estándar).
+
+3. Administración de archivos:
+   - Se podrán crear, eliminar y modificar archivos de texto plano.
+   - Se simulará un sistema de archivos jerárquico básico (carpetas, rutas).
+
+4. Gestión de programas:
+   - Se podrán instalar, desinstalar, actualizar y consultar programas básicos (este módulo se agregará más adelante).
+   - El enfoque será en simular un "gestor de paquetes" visual y funcional.
+
+5. Utilerías mínimas incluidas:
+   - Calculadora funcional.
+   - Calendario visual interactivo.
+   - Bloc de notas o editor de texto básico.
+
+🔧 Tecnologías principales:
+- HTML, CSS (con opción a Tailwind para estilos).
+- JavaScript puro (modularizado).
+- Simulación en entorno web (no acceso real a sistema de archivos del usuario).
+- Posible uso de LocalStorage o IndexedDB para persistencia.
+
+📌 Notas:
+- El proyecto es una simulación, no un sistema operativo real.
+- Se busca una experiencia visual educativa y funcional.
+
+/SO/                        ← Carpeta raíz del proyecto
+│
+├── index.html              ← Escritorio del sistema operativo
+├── login.html              ← Pantalla de inicio de sesión (usuario/contraseña)
+├── style.css               ← Estilo global del sistema
+├── main.js                 ← Lógica general del escritorio (ventanas, íconos)
+│
+├── /assets/                ← Imágenes, íconos, fondos, logos
+│   ├── icono-nota.png
+│   ├── icono-calc.png
+│   ├── icono-calendario.png
+│   └── fondo.jpg
+│
+├── /apps/                  ← Aplicaciones simuladas del sistema operativo
+│   ├── notepad.js          ← Bloc de notas
+│   ├── calculator.js       ← Calculadora funcional
+│   ├── calendar.js         ← Calendario interactivo
+│   └── apps.css            ← Estilos específicos para ventanas de apps
+│
+├── /auth/                  ← Módulo de autenticación
+│   ├── auth.js             ← Lógica de login y validación
+│   └── users.json          ← Usuarios simulados (para prueba)
+│
+├── /filesystem/            ← Módulo de archivos
+│   ├── explorer.js         ← Simulador del explorador de archivos
+│   ├── files.json          ← Estructura de archivos simulados
+│   └── fs-utils.js         ← Funciones CRUD (crear, leer, modificar, borrar)
+│
+├── /pkgmanager/            ← (Opcional) Módulo de instalación de programas
+│   ├── manager.js          ← Instalar / desinstalar apps simuladas
+│   └── available.json      ← Lista de programas disponibles
+│
+└── README.md               ← Bitácora y documentación del proyecto
+
+📌 Mejoras implementadas en autenticación:
+
+- Se agregó un botón de "Cerrar sesión" que permite al usuario cerrar su sesión de forma segura y volver al login.
+- Se implementó el uso de `localStorage` para guardar el nombre del usuario autenticado y permitir persistencia temporal.
+- Se añadió verificación en `index.html` para impedir el acceso si no hay un usuario autenticado.
+- Estas mejoras permiten simular una sesión activa básica y control de acceso entre páginas del sistema.
