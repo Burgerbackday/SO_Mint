@@ -1,3 +1,5 @@
+let selectedFile = null;
+
 function openFileManager() {
   const fileList = document.getElementById("fileList");
   fileList.innerHTML = "";
@@ -19,6 +21,11 @@ function openFileManager() {
       document.getElementById('fileManagerWindow').style.display = "flex"; // ❗ Muy importante
       updateTaskbarButtons(); // Para mostrarlo en la barra
     });
+}
+
+function createNewFile() {
+  selectedFile = null;
+  openFileEditor("", ""); // abre bloc de notas vacío
 }
 
 function openSelectedFile() {

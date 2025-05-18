@@ -25,9 +25,6 @@ app.use(express.static(__dirname)); // Sirve HTML, JS, imágenes, etc.
 const FILES_DIR = path.join(__dirname, 'archivos');
 
 // Ruta para leer archivos .txt reales
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'login.html'));
-  });
 
 // Ruta para guardar un archivo nuevo o actualizado
 app.post('/guardar', (req, res) => {
@@ -59,6 +56,25 @@ app.get('/listar', (req, res) => {
     res.json(files.filter(f => f.endsWith('.txt')));
   });
 });
+
+// Leer un archivo específico
+app.get('/leer/:nombre', (req, res) => {
+    const nombre = req.params.nombre;
+  
+    // Validar nombre seguro (letras, números, guiones, guion bajo)
+    if (!/^[\w\-]+\.txt$/.test(nombre)) {
+      return res.status(400).json({ error: 'Nombre de archivo inválido' });
+    }
+  
+    const archivo = path.join(FILES_DIR, nombre);
+  
+    if (fs.existsSync(archivo)) {
+      const contenido = fs.readFileSync(archivo, 'utf8');
+      res.send(contenido);
+    } else {
+      res.status(404).send("Archivo no encontrado");
+    }
+  });
 
 app.listen(3000, () => {
   console.log('✅ Servidor corriendo en http://localhost:3000');

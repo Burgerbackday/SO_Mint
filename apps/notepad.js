@@ -76,3 +76,13 @@ function nuevaNota() {
   document.getElementById('notaNombre').value = '';
   document.getElementById('notaSelect').value = '';
 }
+
+function openFileEditor(nombre, contenido) {
+  openWindow('notepadWindow');
+  document.getElementById('notepadTextarea').value = contenido;
+  document.getElementById('notaNombre').value = nombre;
+  document.getElementById('notaSelect').value = '';
+}
+
+// 🔗 Hazla accesible globalmente
+window.openFileEditor = openFileEditor;

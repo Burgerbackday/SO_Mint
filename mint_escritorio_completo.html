@@ -1,9 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   
   <meta charset="UTF-8">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
   <title>Escritorio Linux Mint Completo</title>
   <style>
     * { box-sizing: border-box; }
@@ -15,19 +16,19 @@
   font-family: 'Segoe UI', Tahoma, sans-serif;
   overflow: hidden;
 }
-    .taskbar {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 40px;
-      background: rgba(20, 20, 20, 0.9);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 10px;
-      color: white;
-      z-index: 10;
-    }
+.taskbar {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 40px;
+  background: rgba(20, 20, 20, 0.9);
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  color: white;
+  z-index: 10;
+  gap: 10px; /* para separar el menú y los botones */
+}
     .menu {
       background-color: rgba(0, 100, 0, 0.9);
       padding: 5px 10px;
@@ -79,22 +80,26 @@
   left: 100px;
   width: 500px;
   height: 300px;
-  background-color: #111;
+  background-color: #2b2b2b;      /* gris grafito */
   border-radius: 8px;
-  color: #0f0;
+  color: #93d18f;                 /* verde menta suave */
   display: none;
   flex-direction: column;
-  /* box-shadow: 0 0 15px #0f0; ← COMENTADA O QUITADA */
-  box-shadow: none; /* o una sombra gris suave */
+  box-shadow: 0 0 10px #0008;     /* sombra ligera */
   z-index: 5;
 }
+.close-icon {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
     .window-header {
-      background-color: #222;
+      background-color: #292929;
       padding: 5px 10px;
       font-weight: bold;
       display: flex;
       justify-content: space-between;
-      color: #fff;
+      color: #e3e3e3;
     }
     .window-body {
   flex: 1;
@@ -106,8 +111,8 @@
       cursor: pointer;
     }
     .terminal {
-  background-color: #111;
-  color: #0f0;
+  background-color: #1e1e1e;
+  color: #93d18f;
   padding: 10px;
   font-family: monospace;
   height: 300px;
@@ -131,8 +136,8 @@
     .calc-buttons button {
       padding: 10px;
       font-size: 1rem;
-      background-color: #333;
-      color: #0f0;
+      background-color: #3c3c3c;
+      color: #93d18f;
       border: none;
       cursor: pointer;
     }
@@ -145,6 +150,7 @@
     .calendar-grid div {
       padding: 5px;
       background-color: #222;
+      color: #93d18f;
     }
     .start-icon {
   height: 28px;
@@ -189,22 +195,36 @@
   border-bottom: 1px dotted #444;
   padding: 2px 0;
 }
+.taskbar-btn {
+  background: transparent;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+  .taskbar-btn:hover span { color: #aaffaa; }
   </style>
 </head>
 <body>
 
 <div class="desktop">
-  <div class="app-icon" onclick="openMusicPlayer()" style="top: 500px; left: 40px;">
+  <div class="app-icon" onclick="renderWindow('musicPlayer'); openWindow('musicPlayerWindow')" style="top: 500px; left: 40px;">
     🎵<br>Música
   </div>
-  <div class="app-icon" onclick="openNotepad()" style="top: 660px; left: 40px;">
+  <div class="app-icon" onclick="renderWindow('notepad'); openWindow('notepadWindow')" style="top: 660px; left: 40px;">
     📝<br>Notas
   </div>
-  <div class="app-icon" onclick="openFileManager()" style="top: 580px; left: 40px;">📁<br>Archivos</div>
-  <div class="app-icon" onclick="openTaskManager()" style="top: 360px; left: 40px;">🧠<br>TaskMgr</div>
-  <div class="app-icon" onclick="openWindow('terminalWindow')" style="top: 40px; left: 40px;">🖥️<br>Terminal</div>
-<div class="app-icon" onclick="openWindow('calcWindow')" style="top: 200px; left: 40px;">🧮<br>Calculadora</div>
-<div class="app-icon" onclick="openWindow('calendarWindow')" style="top: 280px; left: 40px;">📅<br>Calendario</div>
+  <div class="app-icon" onclick="renderWindow('fileManager'); openWindow('fileManagerWindow')" style="top: 580px; left: 40px;">📁<br>Archivos</div>
+  <div class="app-icon" onclick="renderWindow('taskManager'); openWindow('taskManagerWindow')" style="top: 360px; left: 40px;">🧠<br>TaskMgr</div>
+  <div class="app-icon" onclick="renderWindow('terminal'); openWindow('terminalWindow')" style="top: 40px; left: 40px;">🖥️<br>Terminal</div>
+<div class="app-icon" onclick="renderWindow('calc'); openWindow('calcWindow')" style="top: 200px; left: 40px;">🧮<br>Calculadora</div>
+<div class="app-icon" onclick="renderWindow('calendar'); openWindow('calendarWindow')" style="top: 280px; left: 40px;">📅<br>Calendario</div>
 </div>
 
 <div class="taskbar">
@@ -212,6 +232,7 @@
     <img src="assets/start_button.png" alt="Inicio" class="start-icon">
   </div>
 
+  <!-- Botones a la derecha del menú -->
   <div id="taskButtonsContainer" style="display: flex; gap: 5px;"></div>
 
   <div class="clock" id="clock"></div>
@@ -221,133 +242,16 @@
   <div onclick="openFileManager()">📁 Archivos</div>
   <div onclick="openMusicPlayer()">🎵 Música</div>
   <div onclick="openTaskManager()">🧠 TaskMgr</div>
-  <div onclick="openWindow('terminalWindow')">🖥️ Terminal</div>
-  <div onclick="openWindow('notepadWindow')">📝 Bloc de Notas</div>
-  <div onclick="openWindow('calcWindow')">🧮 Calculadora</div>
-  <div onclick="openWindow('calendarWindow')">📅 Calendario</div>
+  <div onclick="renderWindow('terminal'); openWindow('terminalWindow')">🖥️ Terminal</div>
+  <div onclick="renderWindow('notepad'); openWindow('notepadWindow')">📝 Bloc de Notas</div>
+  <div onclick="renderWindow('calc'); openWindow('calcWindow')">🧮 Calculadora</div>
+  <div onclick="renderWindow('calendar'); openWindow('calendarWindow')">📅 Calendario</div>
   <hr style="margin: 10px 0; border-color: #555;">
   <div onclick="cerrarSesion()">🔒 Cerrar sesión</div>
   <div onclick="reiniciarSistema()">🔄 Reiniciar</div>
   <div onclick="apagarSistema()">⏻ Apagar</div>
 </div>
 
-<!-- Terminal -->
-<div class="window" id="terminalWindow">
-  <div class="window-header">
-    <span>Terminal</span><span class="close-btn" onclick="closeWindow('terminalWindow')">✖</span>
-  </div>
-  <div class="window-body" id="terminalOutput">usuario@mint:~$<br></div>
-  <input type="text" class="terminal-input" id="terminalInput" placeholder="Escriba un comando">
-  <div class="resize-handle"></div>
-</div>
-
-
-
-
-
-
-<!-- Task Manager -->
-<div class="window" id="taskManagerWindow" style="display: none; width: 700px; height: 400px;">
-  <div class="window-header">
-    <span>htop</span><span class="close-btn" onclick="closeWindow('taskManagerWindow')">✖</span>
-  </div>
-  <div class="window-body htop-body" id="htopOutput">
-    <!-- Aquí se generará el contenido por JS -->
-  </div>
-</div>
-
-<!-- Reproductor de Música -->
-<div class="window" id="musicPlayerWindow" style="display: none; width: 400px; height: 300px;">
-  <div class="window-header">
-    <span>Reproductor</span><span class="close-btn" onclick="closeWindow('musicPlayerWindow')">✖</span>
-  </div>
-  <div class="window-body" id="musicContent" style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 15px;">
-    <div id="currentSong">No hay canción</div>
-
-    <audio id="audioPlayer" src="" style="display:none;"></audio>
-
-    <input id="progressBar" type="range" value="0" min="0" max="100" step="1" style="width: 90%;" />
-
-    <div style="display: flex; gap: 10px;">
-      <button onclick="toggleShuffle()">🔀</button>
-      <button onclick="toggleLoop()">🔁</button>
-      <button onclick="playMusic()">▶️</button>
-      <button onclick="pauseMusic()">⏸️</button>
-      <button onclick="nextMusic()">⏭️</button>
-    </div>
-
-    <label style="margin-top: 10px;">
-      Volumen:
-      <input id="volumeControl" type="range" min="0" max="1" step="0.01" value="1">
-    </label>
-
-    <select id="playlistSelect" onchange="loadSelectedSong()"></select>
-  </div>
-  <div class="resize-handle"></div>
-</div>
-
-<!-- Gestor de Archivos -->
-<div class="window" id="fileManagerWindow" style="display: none; width: 500px; height: 350px;">
-  <div class="window-header">
-    <span>Archivos</span><span class="close-btn" onclick="closeWindow('fileManagerWindow')">✖</span>
-  </div>
-  <div class="window-body" style="padding: 10px;">
-    <div id="fileList" style="max-height: 200px; overflow-y: auto; margin-bottom: 10px;"></div>
-    <button onclick="openSelectedFile()">📂 Abrir</button>
-    <button onclick="createNewFile()">➕ Nuevo</button>
-  </div>
-</div>
-
-
-<!-- Calculadora -->
-<div class="window" id="calcWindow">
-  <div class="window-header">
-    <span>Calculadora</span><span class="close-btn" onclick="closeWindow('calcWindow')">✖</span>
-  </div>
-  <div class="window-body">
-    <input type="text" id="calcDisplay" class="terminal-input" readonly>
-    <div class="calc-buttons">
-      <button onclick="appendCalc('7')">7</button><button onclick="appendCalc('8')">8</button><button onclick="appendCalc('9')">9</button><button onclick="appendCalc('/')">/</button>
-      <button onclick="appendCalc('4')">4</button><button onclick="appendCalc('5')">5</button><button onclick="appendCalc('6')">6</button><button onclick="appendCalc('*')">*</button>
-      <button onclick="appendCalc('1')">1</button><button onclick="appendCalc('2')">2</button><button onclick="appendCalc('3')">3</button><button onclick="appendCalc('-')">-</button>
-      <button onclick="appendCalc('0')">0</button><button onclick="appendCalc('.')">.</button><button onclick="calculateCalc()">=</button><button onclick="appendCalc('+')">+</button>
-      <button onclick="clearCalc()" style="grid-column: span 4;">C</button>
-    </div>
-  </div>
-  <div class="resize-handle"></div>
-</div>
-
-<!-- Bloc de Notas -->
-<div class="window" id="notepadWindow" style="display: none; width: 500px; height: 400px;">
-  <div class="window-header">
-    <span>Bloc de Notas</span>
-    <span class="close-btn" onclick="closeWindow('notepadWindow')">✖</span>
-  </div>
-  <div class="window-body" style="padding: 10px; display: flex; flex-direction: column;">
-    <div style="flex: 1; overflow-y: auto;">
-      <select id="notaSelect" style="width: 100%; margin-bottom: 10px;" onchange="cargarNotaSeleccionada()">
-        <option value="">-- Selecciona una nota --</option>
-      </select>
-      <textarea id="notepadTextarea" style="width: 100%; height: 220px; resize: none;"></textarea>
-    </div>
-    <div style="margin-top: 10px;">
-      <input type="text" id="notaNombre" placeholder="Nombre_nota.txt" style="width: 60%;">
-      <button onclick="guardarNota()">💾 Guardar</button>
-      <button onclick="eliminarNota()">🗑️ Eliminar</button>
-      <button onclick="nuevaNota()">🆕 Nueva</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- Calendario -->
-<div class="window" id="calendarWindow">
-  <div class="window-header">
-    <span>Calendario</span><span class="close-btn" onclick="closeWindow('calendarWindow')">✖</span>
-  </div>
-  <div class="window-body" id="calendarBody"></div>
-  <div class="resize-handle"></div>
-</div>
 
 <script>
 function toggleMenu() {
@@ -391,19 +295,6 @@ function clearCalc() {
   document.getElementById("calcDisplay").value = "";
 }
 
-// Calendario
-function drawCalendar() {
-  const body = document.getElementById("calendarBody");
-  const now = new Date();
-  const days = ["D", "L", "M", "M", "J", "V", "S"];
-  const first = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
-  const last = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
-  body.innerHTML = '<div class="calendar-grid">' + days.map(d => "<div><b>" + d + "</b></div>").join("");
-  for (let i = 0; i < first; i++) body.innerHTML += "<div></div>";
-  for (let i = 1; i <= last; i++) body.innerHTML += "<div>" + i + "</div>";
-  body.innerHTML += "</div>";
-}
-drawCalendar();
 
 
 
@@ -504,6 +395,7 @@ document.querySelectorAll('.resize-handle').forEach(handle => {
     isResizing = false;
   });
 });
+
 function updateTaskbarButtons() {
   const container = document.getElementById('taskButtonsContainer');
   container.innerHTML = '';
@@ -511,25 +403,27 @@ function updateTaskbarButtons() {
   const windows = document.querySelectorAll('.window');
   windows.forEach(win => {
     const id = win.id;
-    const title = win.querySelector('.window-header span')?.textContent || id;
+    const icon = {
+      terminalWindow: "🖥️",
+      notepadWindow: "📝",
+      calcWindow: "🧮",
+      calendarWindow: "📅",
+      taskManagerWindow: "🧠",
+      musicPlayerWindow: "🎵",
+      fileManagerWindow: "📁"
+    }[id] || "📦";
+
     if (win.style.display !== 'none') {
       const btn = document.createElement('button');
-      btn.textContent = title;
-      btn.style.padding = '3px 8px';
-      btn.style.background = '#333';
-      btn.style.color = '#0f0';
-      btn.style.border = '1px solid #0f0';
-      btn.style.borderRadius = '4px';
-      btn.style.cursor = 'pointer';
+      btn.className = 'taskbar-btn';
+      btn.innerHTML = `<span>${icon}</span>`;
+      btn.title = win.querySelector('.window-header span')?.textContent || id;
+      // Removed redundant inline styles for taskbar-btn, only .background allowed if needed
       btn.onclick = () => {
-        // Alternar visibilidad (minimizar si ya está al frente)
-        if (win.style.display !== 'none') {
-          win.style.display = 'none';
-        } else {
-          openWindow(id);
-        }
-        updateTaskbarButtons(); // actualiza la barra
+        win.style.display = win.style.display === 'none' ? 'flex' : 'none';
+        updateTaskbarButtons();
       };
+
       container.appendChild(btn);
     }
   });
@@ -541,6 +435,8 @@ function updateTaskbarButtons() {
 <script src="apps/musica.js"></script>
 <script src="apps/taskmanager.js"></script>
 <script src="apps/terminal.js"></script>
+<script src="apps/ventanas.js"></script>
+<script src="apps/calendario.js"></script>
 
 <script>
   function cerrarSesion() {

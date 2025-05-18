@@ -1,82 +1,81 @@
-// Simulación de recursos disponibles del sistema
-let totalRAM = 8192; // 8 GB
-let totalCPU = 100;  // porcentaje máximo de CPU
-let appResources = {
-  terminalWindow: { name: "Terminal", cpu: 0, ram: 0 },
-  notepadWindow: { name: "Notas", cpu: 0, ram: 0 },
-  calcWindow: { name: "Calculadora", cpu: 0, ram: 0 },
-  calendarWindow: { name: "Calendario", cpu: 0, ram: 0 },
-};
+/* apps/taskmanager.js
+   --------------------------------------------------------
+   Simulador sencillo de Task Manager:
+   - Escanea ventanas abiertas (.window) para listar procesos.
+   - Calcula CPU y RAM simuladas.
+   - Permite “Finalizar” (ocultar) una ventana y refrescar métricas.
+*/
 
-function openTaskManager() {
-  const output = document.getElementById("htopOutput");
-  output.innerHTML = '';
+const TOTAL_RAM_MB = 8192;  // 8 GB
+const TOTAL_CPU_PCT = 100;
 
-  const load = [Math.random().toFixed(2), Math.random().toFixed(2), Math.random().toFixed(2)];
-  const uptime = new Date().toLocaleTimeString();
+function updateTaskManager() {
+  const statsEl = document.getElementById('taskStats');
+  const listEl  = document.getElementById('taskList');
+  if (!statsEl || !listEl) return;         // ventana aún no renderizada
 
-  let usedRAM = 0;
-  let usedCPU = 0;
+  /* --- detectar apps abiertas --- */
+  const liveApps = Array.from(document.querySelectorAll('.window'))
+    .filter(w => w.style.display !== 'none' && w.id !== 'taskManagerWindow')
+    .map((w, idx) => ({
+      pid: 1000 + idx,
+      id:  w.id,
+      name: w.querySelector('.window-header span').textContent,
+      cpu: Math.floor(Math.random() * 12) + 3,   // 3‑15 %
+      ram: Math.floor(Math.random() * 250) + 50  // 50‑300 MB
+    }));
 
-  // Calcular consumo y simular recursos
-  Object.keys(appResources).forEach(appId => {
-    const win = document.getElementById(appId);
-    if (win && win.style.display !== 'none') {
-      const cpu = Math.floor(Math.random() * 15) + 5;   // 5–20%
-      const ram = Math.floor(Math.random() * 300) + 100; // 100–400MB
-      appResources[appId].cpu = cpu;
-      appResources[appId].ram = ram;
-      usedCPU += cpu;
-      usedRAM += ram;
-    } else {
-      appResources[appId].cpu = 0;
-      appResources[appId].ram = 0;
-    }
+  /* --- totales --- */
+  const usedCPU = liveApps.reduce((a, p) => a + p.cpu, 0);
+  const usedRAM = liveApps.reduce((a, p) => a + p.ram, 0);
+
+  /* --- cabecera tipo htop --- */
+  const memBar = bar(usedRAM / TOTAL_RAM_MB);
+  const cpuBar = bar(usedCPU / TOTAL_CPU_PCT);
+  const load   = [Math.random().toFixed(2), Math.random().toFixed(2), Math.random().toFixed(2)];
+
+  statsEl.textContent =
+`Mem [${memBar}] ${(usedRAM/1024).toFixed(2)}G/${(TOTAL_RAM_MB/1024).toFixed(2)}G
+CPU [${cpuBar}] ${usedCPU}%/${TOTAL_CPU_PCT}%
+
+Tasks: ${liveApps.length},  Threads: ${liveApps.length*3},  Load avg: ${load.join(' ')}
+Uptime: ${new Date().toLocaleTimeString()}
+
+PID   APP             CPU%  RAM(MB)`;
+
+  /* --- lista de procesos --- */
+  listEl.innerHTML = '';
+  liveApps.forEach(app => {
+    const row = document.createElement('div');
+    row.innerHTML = `
+<span style="display:inline-block;width:50px">${app.pid}</span>
+<span style="display:inline-block;width:130px">${app.name}</span>
+<span style="display:inline-block;width:50px">${app.cpu}</span>
+<span style="display:inline-block;width:70px">${app.ram}</span>
+<button onclick="killApp('${app.id}')" style="font-size:10px">Finalizar</button>
+    `;
+    listEl.appendChild(row);
   });
-
-  const memUsed = (usedRAM / 1024).toFixed(2);
-  const memTotal = (totalRAM / 1024).toFixed(2);
-
-  output.innerHTML += `
-Mem [${'|'.repeat((usedRAM / totalRAM) * 20).padEnd(20)}] ${memUsed}G/${memTotal}G
-CPU [${'|'.repeat((usedCPU / totalCPU) * 20).padEnd(20)}] ${usedCPU}%/${totalCPU}%
-
-Tasks: ${getOpenAppsCount()},  Threads: ${getOpenAppsCount() * 3},  Load avg: ${load.join(' ')}
-Uptime: ${uptime}
-
-PID   APP        CPU%  RAM(MB)    ACTION
-`.trim() + '\n';
-
-  let pid = 1000;
-
-  Object.keys(appResources).forEach(appId => {
-    const win = document.getElementById(appId);
-    if (win && win.style.display !== 'none') {
-      const app = appResources[appId];
-      output.innerHTML += `
-${pid.toString().padEnd(6)}${app.name.padEnd(10)}${app.cpu.toString().padEnd(6)}${app.ram.toString().padEnd(10)}
-<button onclick="killApp('${appId}')">Finalizar tarea</button>
-      `;
-      pid += 1;
-    }
-  });
-
-  openWindow('taskManagerWindow');
 }
 
+/* Helper para dibujar barras ASCII */
+function bar(pct) {
+  const blocks = Math.round(pct * 20);
+  return '|'.repeat(blocks).padEnd(20);
+}
+
+/* Finalizar proceso */
 function killApp(appId) {
   const win = document.getElementById(appId);
   if (win) {
     win.style.display = 'none';
-    appResources[appId].cpu = 0;
-    appResources[appId].ram = 0;
-    openTaskManager(); // recargar vista
+    updateTaskManager();
   }
 }
 
-function getOpenAppsCount() {
-  return Object.keys(appResources).filter(appId => {
-    const win = document.getElementById(appId);
-    return win && win.style.display !== 'none';
-  }).length;
-}
+/* Exponer para ventanas.js */
+function initTaskManager() { updateTaskManager(); }
+window.initTaskManager = initTaskManager;
+
+/* Autorefresco cada 4 s */
+setInterval(updateTaskManager, 4000);

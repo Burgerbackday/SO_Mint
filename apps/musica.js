@@ -87,10 +87,24 @@ function loadSelectedSong() {
 
 function playMusic() {
   audio.play();
+  const btn = document.getElementById('playPauseBtn');
+  btn.classList.remove('retro-btn-play');
+  btn.classList.add('retro-btn-pause');
 }
 
 function pauseMusic() {
   audio.pause();
+  const btn = document.getElementById('playPauseBtn');
+  btn.classList.remove('retro-btn-pause');
+  btn.classList.add('retro-btn-play');
+}
+
+function togglePlayPause() {
+  if (audio.paused) {
+    playMusic();
+  } else {
+    pauseMusic();
+  }
 }
 
 function nextMusic() {
