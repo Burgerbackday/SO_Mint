@@ -194,9 +194,15 @@
 <body>
 
 <div class="desktop">
+  <div class="app-icon" onclick="openMusicPlayer()" style="top: 500px; left: 40px;">
+    🎵<br>Música
+  </div>
+  <div class="app-icon" onclick="openNotepad()" style="top: 660px; left: 40px;">
+    📝<br>Notas
+  </div>
+  <div class="app-icon" onclick="openFileManager()" style="top: 580px; left: 40px;">📁<br>Archivos</div>
   <div class="app-icon" onclick="openTaskManager()" style="top: 360px; left: 40px;">🧠<br>TaskMgr</div>
   <div class="app-icon" onclick="openWindow('terminalWindow')" style="top: 40px; left: 40px;">🖥️<br>Terminal</div>
-<div class="app-icon" onclick="openWindow('notepadWindow')" style="top: 120px; left: 40px;">📝<br>Notas</div>
 <div class="app-icon" onclick="openWindow('calcWindow')" style="top: 200px; left: 40px;">🧮<br>Calculadora</div>
 <div class="app-icon" onclick="openWindow('calendarWindow')" style="top: 280px; left: 40px;">📅<br>Calendario</div>
 </div>
@@ -212,12 +218,17 @@
 </div>
 
 <div class="menu-panel" id="menuPanel">
-  
+  <div onclick="openFileManager()">📁 Archivos</div>
+  <div onclick="openMusicPlayer()">🎵 Música</div>
   <div onclick="openTaskManager()">🧠 TaskMgr</div>
   <div onclick="openWindow('terminalWindow')">🖥️ Terminal</div>
   <div onclick="openWindow('notepadWindow')">📝 Bloc de Notas</div>
   <div onclick="openWindow('calcWindow')">🧮 Calculadora</div>
   <div onclick="openWindow('calendarWindow')">📅 Calendario</div>
+  <hr style="margin: 10px 0; border-color: #555;">
+  <div onclick="cerrarSesion()">🔒 Cerrar sesión</div>
+  <div onclick="reiniciarSistema()">🔄 Reiniciar</div>
+  <div onclick="apagarSistema()">⏻ Apagar</div>
 </div>
 
 <!-- Terminal -->
@@ -245,15 +256,47 @@
   </div>
 </div>
 
-<!-- Notas -->
-<div class="window" id="notepadWindow">
+<!-- Reproductor de Música -->
+<div class="window" id="musicPlayerWindow" style="display: none; width: 400px; height: 300px;">
   <div class="window-header">
-    <span>Bloc de Notas</span><span class="close-btn" onclick="closeWindow('notepadWindow')">✖</span>
+    <span>Reproductor</span><span class="close-btn" onclick="closeWindow('musicPlayerWindow')">✖</span>
   </div>
-  <textarea placeholder="Escribe tus notas aquí..."></textarea>
+  <div class="window-body" id="musicContent" style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 15px;">
+    <div id="currentSong">No hay canción</div>
+
+    <audio id="audioPlayer" src="" style="display:none;"></audio>
+
+    <input id="progressBar" type="range" value="0" min="0" max="100" step="1" style="width: 90%;" />
+
+    <div style="display: flex; gap: 10px;">
+      <button onclick="toggleShuffle()">🔀</button>
+      <button onclick="toggleLoop()">🔁</button>
+      <button onclick="playMusic()">▶️</button>
+      <button onclick="pauseMusic()">⏸️</button>
+      <button onclick="nextMusic()">⏭️</button>
+    </div>
+
+    <label style="margin-top: 10px;">
+      Volumen:
+      <input id="volumeControl" type="range" min="0" max="1" step="0.01" value="1">
+    </label>
+
+    <select id="playlistSelect" onchange="loadSelectedSong()"></select>
+  </div>
   <div class="resize-handle"></div>
 </div>
 
+<!-- Gestor de Archivos -->
+<div class="window" id="fileManagerWindow" style="display: none; width: 500px; height: 350px;">
+  <div class="window-header">
+    <span>Archivos</span><span class="close-btn" onclick="closeWindow('fileManagerWindow')">✖</span>
+  </div>
+  <div class="window-body" style="padding: 10px;">
+    <div id="fileList" style="max-height: 200px; overflow-y: auto; margin-bottom: 10px;"></div>
+    <button onclick="openSelectedFile()">📂 Abrir</button>
+    <button onclick="createNewFile()">➕ Nuevo</button>
+  </div>
+</div>
 
 
 <!-- Calculadora -->
@@ -273,6 +316,29 @@
   </div>
   <div class="resize-handle"></div>
 </div>
+
+<!-- Bloc de Notas -->
+<div class="window" id="notepadWindow" style="display: none; width: 500px; height: 400px;">
+  <div class="window-header">
+    <span>Bloc de Notas</span>
+    <span class="close-btn" onclick="closeWindow('notepadWindow')">✖</span>
+  </div>
+  <div class="window-body" style="padding: 10px; display: flex; flex-direction: column;">
+    <div style="flex: 1; overflow-y: auto;">
+      <select id="notaSelect" style="width: 100%; margin-bottom: 10px;" onchange="cargarNotaSeleccionada()">
+        <option value="">-- Selecciona una nota --</option>
+      </select>
+      <textarea id="notepadTextarea" style="width: 100%; height: 220px; resize: none;"></textarea>
+    </div>
+    <div style="margin-top: 10px;">
+      <input type="text" id="notaNombre" placeholder="Nombre_nota.txt" style="width: 60%;">
+      <button onclick="guardarNota()">💾 Guardar</button>
+      <button onclick="eliminarNota()">🗑️ Eliminar</button>
+      <button onclick="nuevaNota()">🆕 Nueva</button>
+    </div>
+  </div>
+</div>
+
 
 <!-- Calendario -->
 <div class="window" id="calendarWindow">
@@ -338,6 +404,9 @@ function drawCalendar() {
   body.innerHTML += "</div>";
 }
 drawCalendar();
+
+
+
 // Funcionalidad para hacer arrastrables las ventanas
 document.querySelectorAll('.window').forEach(windowEl => {
   const header = windowEl.querySelector('.window-header');
@@ -354,6 +423,8 @@ document.querySelectorAll('.window').forEach(windowEl => {
     windowEl.style.zIndex = 100;
     e.preventDefault(); // prevenir selección de texto
   });
+
+  
 
   document.addEventListener('mousemove', (e) => {
     if (!isDragging) return;
@@ -465,7 +536,30 @@ function updateTaskbarButtons() {
 }
 
 </script>
-<script src="taskmanager.js"></script>
-<script src="terminal.js"></script>
+<script src="apps/notepad.js"></script>
+<script src="apps/filemanager.js"></script>
+<script src="apps/musica.js"></script>
+<script src="apps/taskmanager.js"></script>
+<script src="apps/terminal.js"></script>
+
+<script>
+  function cerrarSesion() {
+    window.location.href = "index.html"; // o la ruta a tu login si es otra
+  }
+  
+  function reiniciarSistema() {
+    location.reload();
+  }
+  
+  function apagarSistema() {
+    const confirmacion = confirm("¿Seguro que deseas apagar?");
+    if (confirmacion) {
+      document.body.innerHTML = `
+        <div style="background:black; color:white; height:100vh; display:flex; align-items:center; justify-content:center; font-size:2em;">
+          📴 El sistema se ha apagado.
+        </div>`;
+    }
+  }
+  </script>
 </body>
 </html>

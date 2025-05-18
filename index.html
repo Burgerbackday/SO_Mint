@@ -2,17 +2,258 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Simulador SO Web</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Inicio de Sesión</title>
+  <link rel="stylesheet" href="login.css">
+  <style>
+    body {
+  margin: 0;
+  font-family: sans-serif;
+  background: url("assets/background.jpg") no-repeat center center fixed;
+  background-size: cover;
+  color: white;
+  text-align: center;
+}
+
+    #hora {
+      font-size: 48px;
+      margin-top: 30px;
+    }
+
+    #fecha {
+      font-size: 18px;
+      margin-bottom: 30px;
+    }
+
+    .login-box {
+      background: rgba(0, 0, 0, 0.35);
+      padding: 30px;
+      border-radius: 16px;
+      width: fit-content;
+      margin: 0 auto;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .avatar {
+      width: 100px;
+      height: 100px;
+      background: #bbb;
+      border-radius: 50%;
+      margin: 0 auto 20px auto;
+    }
+
+    .input-icon-group {
+      display: flex;
+      align-items: center;
+      background: #1e1e1e;
+      border-radius: 8px;
+      padding: 5px 10px;
+      margin: 8px auto;
+      width: 250px;
+      box-shadow: inset 0 0 0 1px #444;
+    }
+
+    .input-icon-group .icon {
+      color: #ccc;
+      margin-right: 10px;
+    }
+
+    .input-icon-group input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: white;
+      flex: 1;
+      font-size: 16px;
+    }
+
+    .login-box input[type="password"] {
+      width: 250px;
+      padding: 10px 12px;
+      margin: 8px auto;
+      display: block;
+      background: #1e1e1e;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+      box-shadow: inset 0 0 0 1px #444;
+      transition: box-shadow 0.2s ease;
+    }
+
+    .login-box input[type="password"]::placeholder {
+      color: #aaa;
+      font-style: italic;
+    }
+
+    .login-box input[type="password"]:focus {
+      box-shadow: 0 0 0 2px #00bcd4;
+    }
+
+    .btn-login {
+      margin: 20px auto;
+      background: #00d27f;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .btn-login:hover {
+      background: #00aa64;
+    }
+
+    .login-controls {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 30px;
+    }
+
+    .control {
+      font-size: 14px;
+      cursor: pointer;
+      color: #c0c0c0;
+    }
+
+    .control:hover {
+      color: white;
+    }
+
+    .error {
+      color: #ff4d4d;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    #pantalla-apagada,
+    #pantalla-cargando {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      color: white;
+      font-size: 2em;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      flex-direction: column;
+    }
+
+    .spinner {
+      border: 6px solid #444;
+      border-top: 6px solid #00d27f;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-  <div id="desktop">
-    <div class="icon" onclick="abrirNotepad()">
-      <img src="assets/icono-nota.png" alt="Bloc de notas" style="width:48px;">
-      <p>Bloc de notas</p>
+  <div id="hora">00:00</div>
+  <div id="fecha">Fecha</div>
+
+  <div class="login-box">
+    <div class="avatar" style="background-image: url('assets/ahh.jpg'); background-size: cover; background-position: center;"></div>
+
+    <div class="input-icon-group">
+      <span class="icon">👤</span>
+      <input type="text" id="usuario" placeholder="Usuario">
+    </div>
+
+    <input type="password" id="contrasena" placeholder="Contraseña" autocomplete="current-password">
+    <button class="btn-login" onclick="iniciarSesion()">⮞</button>
+
+    <div id="error" class="error"></div>
+
+    <div class="login-controls">
+      <div class="control" title="Reposo" onclick="activarReposo()">💤<br>Reposo</div>
+      <div class="control" title="Reiniciar" onclick="location.reload()">🔄<br>Reiniciar</div>
+      <div class="control" title="Apagar" onclick="window.close()">⏻<br>Apagar</div>
+      <div class="control" title="Otros" onclick="alert('Opciones próximamente')">🖥️<br>Otros</div>
     </div>
   </div>
 
-  <script src="main.js"></script>
+  <div id="pantalla-apagada">💤 En reposo</div>
+
+  <div id="pantalla-cargando">
+    <div class="spinner"></div>
+    Iniciando sesión...
+  </div>
+
+  <script type="module">
+    function iniciarSesion() {
+      const usuario = document.getElementById("usuario").value;
+      const pass = document.getElementById("contrasena").value;
+      const errorBox = document.getElementById("error");
+
+      fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ usuario, contrasena: pass })
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Credenciales incorrectas");
+        return res.json();
+      })
+      .then(() => {
+        document.getElementById("pantalla-cargando").style.display = "flex";
+        setTimeout(() => {
+          window.location.href = "mint_escritorio_completo.html";
+        }, 1500);
+      })
+      .catch(err => {
+        errorBox.textContent = "Contraseña incorrecta.";
+        console.error(err);
+      });
+    }
+
+    function mostrarFechaHora() {
+      const hora = document.getElementById("hora");
+      const fecha = document.getElementById("fecha");
+
+      const hoy = new Date();
+
+      let randomHour = Math.floor(Math.random() * 12) + 1;
+      let randomMinutes = Math.floor(Math.random() * 60);
+      let ampm = Math.random() > 0.5 ? 'AM' : 'PM';
+
+      hora.textContent = `${randomHour.toString().padStart(2, '0')}:${randomMinutes.toString().padStart(2, '0')} ${ampm}`;
+
+      const opcionesFecha = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      fecha.textContent = hoy.toLocaleDateString('es-ES', opcionesFecha);
+    }
+
+    function activarReposo() {
+      const pantalla = document.getElementById('pantalla-apagada');
+      pantalla.style.display = 'flex';
+
+      const salirReposo = () => {
+        pantalla.style.display = 'none';
+        window.removeEventListener('click', salirReposo);
+        window.removeEventListener('keydown', salirReposo);
+      };
+
+      window.addEventListener('click', salirReposo);
+      window.addEventListener('keydown', salirReposo);
+    }
+
+    window.iniciarSesion = iniciarSesion;
+    window.onload = mostrarFechaHora;
+  </script>
 </body>
 </html>
