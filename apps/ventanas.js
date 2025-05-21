@@ -109,6 +109,42 @@ const windowsRegistry = {
 
       </div>
     `
+  },
+  calculator: {
+    id: 'calculatorWindow',
+    title: 'Calculadora',
+    body: `
+      <h2>Calculadora</h2>
+      <select id="modeSelect" onchange="toggleCalcMode()">
+        <option value="basic">Básica</option>
+        <option value="scientific">Científica</option>
+      </select>
+      <div id="basicCalc">
+        <input type="number" id="num1" placeholder="Número 1">
+        <input type="number" id="num2" placeholder="Número 2">
+        <select id="operation">
+          <option value="+">+</option>
+          <option value="-">−</option>
+          <option value="*">×</option>
+          <option value="/">÷</option>
+        </select>
+        <button onclick="calculateBasic()">Calcular</button>
+        <p>Resultado: <span id="result"></span></p>
+      </div>
+      <div id="scientificCalc" style="display:none;">
+        <input type="number" id="sciNum" placeholder="Número">
+        <select id="sciOperation">
+          <option value="sin">sin</option>
+          <option value="cos">cos</option>
+          <option value="tan">tan</option>
+          <option value="log">log</option>
+          <option value="sqrt">√</option>
+          <option value="exp">exp</option>
+        </select>
+        <button onclick="calculateScientific()">Calcular</button>
+        <p>Resultado: <span id="sciResult"></span></p>
+      </div>
+    `
   }
 };
 
@@ -181,6 +217,31 @@ function renderWindow(key) {
   if (key === 'taskManager' && typeof window.initTaskManager === 'function') window.initTaskManager();
   if (key === 'musicPlayer' && typeof window.openMusicPlayer === 'function') {
     window.openMusicPlayer();
+  }
+  if (key === 'fileManager' && typeof window.openFileManager === 'function') {
+    setTimeout(() => {
+      window.openFileManager();
+    }, 50);
+  }
+  if (key === 'notepad' && typeof window.cargarNotas === 'function') {
+    setTimeout(() => {
+      window.cargarNotas();
+    }, 50);
+  }
+  if (key === 'calculator') {
+    setTimeout(() => {
+      if (typeof window.renderCalculator === 'function') {
+        window.renderCalculator();
+      }
+      if (typeof window.toggleCalcMode === 'function') {
+        window.toggleCalcMode();
+      }
+    }, 50);
+  }
+  if (key === 'terminal' && typeof window.initTerminal === 'function') {
+    setTimeout(() => {
+      window.initTerminal();
+    }, 50);
   }
 }
 

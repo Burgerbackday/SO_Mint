@@ -353,8 +353,17 @@ input[type="password"] {
   flex-wrap:wrap;
   gap:16px;
 }
-.fm-content .fm-item{
-  width:64px; text-align:center; font-size:12px; color:#1e1e1e;
+.fm-content .fm-item {
+  width: 64px;
+  text-align: center;
+  font-size: 12px;
+  color: #1e1e1e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  word-break: break-word;
+  padding: 4px;
 }
 .fm-content .fm-item img{ width:48px; height:48px; }
 
@@ -368,4 +377,33 @@ input[type="password"] {
   cursor: nwse-resize;
   background: #666;
   border-radius: 2px;
+}
+.fm-item.selected {
+  background: #7fa96c;
+  color: white;
+  border-radius: 4px;
+}
+.terminal-container {
+  background: #1e1e1e;
+  color: #d6d6d6;
+  font-family: 'Source Code Pro', monospace;
+  padding: 10px;
+  height: 360px;
+  overflow-y: auto;
+  font-size: 14px;
+}
+
+.terminal-input {
+  width: 100%;
+  background: #2d2d2d;
+  border: 1px solid #555;
+  color: #fff;
+  padding: 6px;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 14px;
+}
+
+.terminal-output {
+  white-space: pre-wrap;
+  margin-top: 10px;
 }

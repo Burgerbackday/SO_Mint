@@ -1,9 +1,3 @@
-function openNotepad() {
-  openWindow('notepadWindow');
-  cargarNotasDisponibles();
-  document.getElementById('notepadTextarea').value = '';
-  document.getElementById('notaNombre').value = '';
-}
 
 function cargarNotasDisponibles() {
   fetch('/listar')
@@ -193,3 +187,4 @@ function openFileEditor(nombre, contenido) {
   document.getElementById('notaSelect').value = '';
 }
 window.openFileEditor = openFileEditor;
+window.notepadWindow = 'notepadWindow';

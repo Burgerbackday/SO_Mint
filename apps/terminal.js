@@ -102,4 +102,34 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     }
+
+  const terminalContainer = document.createElement('div');
+  terminalContainer.style.display = 'flex';
+  terminalContainer.style.flexDirection = 'column';
+  terminalContainer.style.height = '100%';
+
+  const outputDiv = document.createElement('div');
+  outputDiv.id = 'terminalOutput';
+  outputDiv.style.flex = '1';
+  outputDiv.style.overflowY = 'auto';
+  outputDiv.style.padding = '10px';
+  outputDiv.style.color = '#8ae234';
+  outputDiv.style.fontFamily = 'monospace';
+
+  const input = document.createElement('input');
+  input.id = 'terminalInput';
+  input.type = 'text';
+  input.placeholder = 'Escribe un comando...';
+  input.style.border = 'none';
+  input.style.outline = 'none';
+  input.style.padding = '10px';
+  input.style.fontSize = '14px';
+  input.style.fontFamily = 'monospace';
+  input.style.background = '#222';
+  input.style.color = '#eee';
+  input.style.width = '100%';
+
+  terminalContainer.appendChild(outputDiv);
+  terminalContainer.appendChild(input);
+  document.getElementById('terminalWindow').appendChild(terminalContainer);
   });

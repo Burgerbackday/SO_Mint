@@ -244,8 +244,9 @@
   <div onclick="openTaskManager()">🧠 TaskMgr</div>
   <div onclick="renderWindow('terminal'); openWindow('terminalWindow')">🖥️ Terminal</div>
   <div onclick="renderWindow('notepad'); openWindow('notepadWindow')">📝 Bloc de Notas</div>
-  <div onclick="renderWindow('calc'); openWindow('calcWindow')">🧮 Calculadora</div>
+  <div onclick="renderWindow('calculator'); openWindow('calculatorWindow')">🧮 Calculadora</div>
   <div onclick="renderWindow('calendar'); openWindow('calendarWindow')">📅 Calendario</div>
+  <div onclick="renderWindow('calculator')">🧮 Calculadora</div>
   <hr style="margin: 10px 0; border-color: #555;">
   <div onclick="cerrarSesion()">🔒 Cerrar sesión</div>
   <div onclick="reiniciarSistema()">🔄 Reiniciar</div>
@@ -410,7 +411,8 @@ function updateTaskbarButtons() {
       calendarWindow: "📅",
       taskManagerWindow: "🧠",
       musicPlayerWindow: "🎵",
-      fileManagerWindow: "📁"
+      fileManagerWindow: "📁",
+      calculatorWindow: "🧮"
     }[id] || "📦";
 
     if (win.style.display !== 'none') {
@@ -437,6 +439,7 @@ function updateTaskbarButtons() {
 <script src="apps/terminal.js"></script>
 <script src="apps/ventanas.js"></script>
 <script src="apps/calendario.js"></script>
+<script src="apps/calculadora.js"></script>
 
 <script>
   function cerrarSesion() {
