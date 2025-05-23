@@ -1,0 +1,7 @@
+{
+    "key": "mininavegador",
+    "title": "Mini Navegador",
+    "description": "Un navegador web simple con historial y navegación embebida.",
+    "icon": "apps/mininavegador/icon.png",
+    "script": "apps/mininavegador/app.js"
+  }

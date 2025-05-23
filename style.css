@@ -384,26 +384,56 @@ input[type="password"] {
   border-radius: 4px;
 }
 .terminal-container {
-  background: #1e1e1e;
-  color: #d6d6d6;
+  background: #000;
+  color: #8ae234;
   font-family: 'Source Code Pro', monospace;
   padding: 10px;
-  height: 360px;
+  height: 100%;
   overflow-y: auto;
-  font-size: 14px;
+  box-sizing: border-box;
+  white-space: pre-wrap;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+
+/* --- Terminal y Ventanas Mejoradas --- */
+.terminal-output {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 5px;
 }
 
 .terminal-input {
   width: 100%;
-  background: #2d2d2d;
-  border: 1px solid #555;
-  color: #fff;
-  padding: 6px;
+  background: #111;
+  border: none;
+  color: #8ae234;
+  padding: 8px;
   font-family: 'Source Code Pro', monospace;
   font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
 }
 
-.terminal-output {
-  white-space: pre-wrap;
-  margin-top: 10px;
+.window {
+  position: absolute;
+  background-color: #1f1f1f;
+  box-shadow: 0 0 15px rgba(0,0,0,0.6);
+  border-radius: 6px;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  z-index: 10;
+}
+
+#terminalWindow {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.window.active {
+  z-index: 9999;
+  outline: 2px solid #8ae234;
 }

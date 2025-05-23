@@ -149,6 +149,13 @@ const windowsRegistry = {
 };
 
 function renderWindow(key) {
+
+  if (key === 'terminal' && typeof window.initTerminal === 'function') {
+    setTimeout(() => {
+      window.initTerminal();
+    }, 50);
+  }
+
   const cfg = windowsRegistry[key];
   if (!cfg) return;
 
@@ -245,5 +252,17 @@ function renderWindow(key) {
   }
 }
 
+
+
 window.renderWindow = renderWindow;
+
+window.registerWindowApp = function (key, config) {
+  if (!key || typeof config !== 'object') return;
+  if (windowsRegistry[key]) {
+    console.warn(`La app "${key}" ya está registrada.`);
+    return;
+  }
+  windowsRegistry[key] = config;
+};
 window.windowsRegistry = windowsRegistry;
+

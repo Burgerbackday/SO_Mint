@@ -211,7 +211,16 @@
   .taskbar-btn:hover span { color: #aaffaa; }
   </style>
 </head>
+<script src="apps/wizard.js" defer></script>
 <body>
+
+  <div class="window hidden" id="wizard_installer">
+    <div class="window-header">
+      <span>Asistente de instalación</span>
+      <span class="close-btn" onclick="closeWindow('wizard_installer')">❌</span>
+    </div>
+    <div class="window-body" id="wizardBody"></div>
+  </div>
 
 <div class="desktop">
   <div class="app-icon" onclick="renderWindow('musicPlayer'); openWindow('musicPlayerWindow')" style="top: 500px; left: 40px;">
@@ -223,8 +232,11 @@
   <div class="app-icon" onclick="renderWindow('fileManager'); openWindow('fileManagerWindow')" style="top: 580px; left: 40px;">📁<br>Archivos</div>
   <div class="app-icon" onclick="renderWindow('taskManager'); openWindow('taskManagerWindow')" style="top: 360px; left: 40px;">🧠<br>TaskMgr</div>
   <div class="app-icon" onclick="renderWindow('terminal'); openWindow('terminalWindow')" style="top: 40px; left: 40px;">🖥️<br>Terminal</div>
-<div class="app-icon" onclick="renderWindow('calc'); openWindow('calcWindow')" style="top: 200px; left: 40px;">🧮<br>Calculadora</div>
+<div class="app-icon" onclick="renderWindow('calculator'); openWindow('calculatorWindow')" style="top: 200px; left: 40px;">🧮<br>Calculadora</div>
 <div class="app-icon" onclick="renderWindow('calendar'); openWindow('calendarWindow')" style="top: 280px; left: 40px;">📅<br>Calendario</div>
+<div class="app-icon" onclick="iniciarInstalador('apps/mininavegador/manifest.json')" style="top: 100px; left: 300px;">
+  📦<br>Instalar Navegador
+</div>
 </div>
 
 <div class="taskbar">
@@ -246,7 +258,8 @@
   <div onclick="renderWindow('notepad'); openWindow('notepadWindow')">📝 Bloc de Notas</div>
   <div onclick="renderWindow('calculator'); openWindow('calculatorWindow')">🧮 Calculadora</div>
   <div onclick="renderWindow('calendar'); openWindow('calendarWindow')">📅 Calendario</div>
-  <div onclick="renderWindow('calculator')">🧮 Calculadora</div>
+  
+  
   <hr style="margin: 10px 0; border-color: #555;">
   <div onclick="cerrarSesion()">🔒 Cerrar sesión</div>
   <div onclick="reiniciarSistema()">🔄 Reiniciar</div>
@@ -436,8 +449,9 @@ function updateTaskbarButtons() {
 <script src="apps/filemanager.js"></script>
 <script src="apps/musica.js"></script>
 <script src="apps/taskmanager.js"></script>
-<script src="apps/terminal.js"></script>
-<script src="apps/ventanas.js"></script>
+<script src="apps/terminal.js" defer></script>
+<script src="apps/ventanas.js" defer></script>
+<script src="apps/appInstaller.js" defer></script>
 <script src="apps/calendario.js"></script>
 <script src="apps/calculadora.js"></script>
 
