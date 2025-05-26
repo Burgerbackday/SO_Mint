@@ -60,14 +60,22 @@ window.initTerminal = function() {
 
   function handleCommand(command, isSudo = false) {
     const usuario = localStorage.getItem("usuarioActivo") || "Invitado";
-    if (usuario === "Invitado") {
-      const permitidos = ['clear'];
-      const comienzaPermitido = command.startsWith("cowsay ");
-      if (!permitidos.includes(command) && !comienzaPermitido) {
-        printToTerminal("🔒 Comando restringido para el usuario Invitado.");
-        return;
-      }
+
+    const permisosPorUsuario = {
+      Invitado: ['clear', 'cowsay', 'ayuda'],
+      admin: ['*'],
+      jared: ['clear', 'cowsay', 'neofetch', 'ping', 'ipconfig', 'apt-get install', 'ayuda']
+    };
+
+    const comandosPermitidos = permisosPorUsuario[usuario] || [];
+    const comandoBase = command.split(' ')[0];
+    const estaPermitido = comandosPermitidos.includes('*') || comandosPermitidos.includes(comandoBase);
+
+    if (!estaPermitido) {
+      printToTerminal(`🔒 ${usuario} no tiene permiso para ejecutar "${command}".`);
+      return;
     }
+
     if (command === 'ipconfig') {
       printToTerminal(`IPv4 Address: 192.168.1.100`);
       printToTerminal(`Subnet Mask: 255.255.255.0`);
@@ -112,6 +120,10 @@ window.initTerminal = function() {
       `);
     } else if (command === 'clear') {
       outputDiv.innerHTML = '';
+    } else if (command === 'ayuda') {
+      const lista = permisosPorUsuario[usuario] || [];
+      const comandos = lista.includes('*') ? 'Todos los comandos habilitados.' : lista.join(', ');
+      printToTerminal(`🛈 Comandos disponibles para ${usuario}: ${comandos}`);
     } else {
       if (isSudo) {
         printToTerminal(`sudo: ${command}: command not found`);

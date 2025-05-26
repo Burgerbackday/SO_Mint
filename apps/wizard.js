@@ -13,17 +13,40 @@ function iniciarInstalador(rutaManifest) {
         <h2>Instalador de ${manifest.title}</h2>
         <img src="${manifest.icon}" width="64" style="margin: 10px 0;">
         <p>${manifest.description}</p>
-        <button onclick="finalizarInstalacion('${manifest.script}', '${manifest.key}', '${manifest.icon}', '${manifest.title}')">
-          Instalar
-        </button>
-        ${yaInstalada ? `<button onclick="desinstalarApp('${manifest.key}', '${manifest.title}')">Desinstalar</button>` : ''}
+        <button id="btn-instalar">Instalar</button>
+        ${yaInstalada ? `<button id="btn-desinstalar">Desinstalar</button>` : ''}
         <button onclick="closeWindow('wizard_installer')">Cancelar</button>
       `;
+
+      const btnInstalar = document.getElementById("btn-instalar");
+      if (btnInstalar) {
+        btnInstalar.addEventListener("click", () => {
+          const usuario = localStorage.getItem("usuarioActivo") || "Invitado";
+          if (usuario === "Invitado") {
+            alert("🔒 No tienes permiso para instalar aplicaciones como usuario Invitado.");
+            return;
+          }
+          finalizarInstalacion(manifest.script, manifest.key, manifest.icon, manifest.title);
+        });
+      }
+
+      const btnDesinstalar = document.getElementById("btn-desinstalar");
+      if (btnDesinstalar) {
+        btnDesinstalar.addEventListener("click", () => {
+          desinstalarApp(manifest.key, manifest.title);
+        });
+      }
     });
 }
 
 
 function finalizarInstalacion(scriptPath, appKey, iconPath, title) {
+  const usuario = localStorage.getItem("usuarioActivo") || "Invitado";
+  if (usuario === "Invitado") {
+    alert("🔒 No tienes permiso para instalar aplicaciones como usuario Invitado.");
+    return;
+  }
+
   const script = document.createElement("script");
   script.src = scriptPath;
 
