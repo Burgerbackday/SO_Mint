@@ -1,0 +1,8 @@
+[
+  {
+    "title": "Mini Navegador",
+    "icon": "apps/mininavegador/icon.png",
+    "manifest": "apps/mininavegador/manifest.json",
+    "key": "mininavegadorApp"
+  }
+]

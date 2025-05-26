@@ -388,7 +388,7 @@ input[type="password"] {
   color: #8ae234;
   font-family: 'Source Code Pro', monospace;
   padding: 10px;
-  height: 100%;
+  height: auto;
   overflow-y: auto;
   box-sizing: border-box;
   white-space: pre-wrap;
@@ -428,7 +428,7 @@ input[type="password"] {
 }
 
 #terminalWindow {
-  height: 100%;
+  height: auto;
   display: flex;
   flex-direction: column;
 }
@@ -437,3 +437,8 @@ input[type="password"] {
   z-index: 9999;
   outline: 2px solid #8ae234;
 }
+.window-body .terminal-container {
+  height: auto;
+}
+
+

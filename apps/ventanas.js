@@ -10,10 +10,7 @@ const windowsRegistry = {
   terminal: {
     id: 'terminalWindow',
     title: 'Terminal',
-    body: `
-      <div id="terminalOutput"></div>
-      <input id="terminalInput" class="terminal-input" placeholder="Comando">
-    `
+    body: `<div class="terminal-container"></div>`
   },
   calc: {
     id: 'calcWindow',
@@ -178,6 +175,10 @@ function renderWindow(key) {
   `;
 
   document.body.appendChild(win);
+  if (key === 'terminal') {
+    win.style.width = '520px';
+    
+  }
 
   /* ───── Habilitar drag & drop ───── */
   const header = win.querySelector('.window-header');

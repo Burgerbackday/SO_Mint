@@ -1,44 +1,36 @@
 window.initTerminal = function() {
-  const terminalContainer = document.getElementById('terminalWindow');
-  if (!terminalContainer) {
-    console.error('No se encontró el contenedor terminalWindow');
+  const container = document.querySelector('.terminal-container');
+  if (!container) {
+    console.error('No se encontró el contenedor de la terminal');
     return;
   }
 
-  // Limpiar contenido previo para evitar duplicados
-  terminalContainer.innerHTML = '';
-
-  terminalContainer.style.display = 'flex';
-  terminalContainer.style.flexDirection = 'column';
-  terminalContainer.style.height = '100%';
+  container.innerHTML = '';
+  container.style.display = 'flex';
+  container.style.flexDirection = 'column';
+  container.style.height = '100%';
 
   const outputDiv = document.createElement('div');
-  outputDiv.id = 'terminalOutput';
-  outputDiv.style.flex = '1';
-  outputDiv.style.overflowY = 'auto';
-  outputDiv.style.padding = '10px';
-  outputDiv.style.color = '#8ae234';
-  outputDiv.style.fontFamily = 'monospace';
+  outputDiv.className = 'terminal-output';
 
   const input = document.createElement('input');
-  input.id = 'terminalInput';
+  input.className = 'terminal-input';
   input.type = 'text';
   input.placeholder = 'Escribe un comando...';
-  input.style.border = 'none';
-  input.style.outline = 'none';
-  input.style.padding = '10px';
-  input.style.fontSize = '14px';
-  input.style.fontFamily = 'monospace';
-  input.style.background = '#222';
-  input.style.color = '#eee';
-  input.style.width = '100%';
 
-  terminalContainer.appendChild(outputDiv);
-  terminalContainer.appendChild(input);
+  container.appendChild(outputDiv);
+  container.appendChild(input);
 
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
-      const inputValue = input.value.trim();
+      const usuario = localStorage.getItem("usuarioActivo") || "Invitado";
+      const comando = input.value.trim();
+      if (usuario === "Invitado" && comando !== "clear" && !comando.startsWith("cowsay ")) {
+        printToTerminal("🔒 Comando no permitido para el usuario Invitado.");
+        input.value = '';
+        return;
+      }
+      const inputValue = comando;
       if (inputValue) {
         printToTerminal(`$ ${inputValue}`);
         parseAndHandleCommand(inputValue);
@@ -59,14 +51,23 @@ window.initTerminal = function() {
         printToTerminal(`[sudo] password for usuario:`);
       } else {
         printToTerminal(`[sudo] password for usuario: ********`);
-        handleCommand(actualCommand, true); // true = modo sudo
+        handleCommand(actualCommand, true);
       }
     } else {
-      handleCommand(input.toLowerCase(), false); // false = sin sudo
+      handleCommand(input.toLowerCase(), false);
     }
   }
 
   function handleCommand(command, isSudo = false) {
+    const usuario = localStorage.getItem("usuarioActivo") || "Invitado";
+    if (usuario === "Invitado") {
+      const permitidos = ['clear'];
+      const comienzaPermitido = command.startsWith("cowsay ");
+      if (!permitidos.includes(command) && !comienzaPermitido) {
+        printToTerminal("🔒 Comando restringido para el usuario Invitado.");
+        return;
+      }
+    }
     if (command === 'ipconfig') {
       printToTerminal(`IPv4 Address: 192.168.1.100`);
       printToTerminal(`Subnet Mask: 255.255.255.0`);

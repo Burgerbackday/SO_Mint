@@ -229,6 +229,9 @@
   <div class="app-icon" onclick="renderWindow('notepad'); openWindow('notepadWindow')" style="top: 660px; left: 40px;">
     📝<br>Notas
   </div>
+  <div class="app-icon" onclick="abrirCentroDeSoftware()" style="top: 120px; left: 380px;">
+    🛠️<br>Instalar Apps
+  </div>
   <div class="app-icon" onclick="renderWindow('fileManager'); openWindow('fileManagerWindow')" style="top: 580px; left: 40px;">📁<br>Archivos</div>
   <div class="app-icon" onclick="renderWindow('taskManager'); openWindow('taskManagerWindow')" style="top: 360px; left: 40px;">🧠<br>TaskMgr</div>
   <div class="app-icon" onclick="renderWindow('terminal'); openWindow('terminalWindow')" style="top: 40px; left: 40px;">🖥️<br>Terminal</div>
@@ -251,6 +254,8 @@
 </div>
 
 <div class="menu-panel" id="menuPanel">
+  <div id="usuarioActivoMenu" style="padding: 5px 10px; color: #aaffaa; font-weight: bold;">👤 Usuario: Invitado</div>
+  <hr style="margin: 5px 0; border-color: #444;">
   <div onclick="openFileManager()">📁 Archivos</div>
   <div onclick="openMusicPlayer()">🎵 Música</div>
   <div onclick="openTaskManager()">🧠 TaskMgr</div>
@@ -287,6 +292,15 @@ function updateClock() {
 }
 setInterval(updateClock, 1000);
 updateClock();
+
+function mostrarUsuarioActivo() {
+  const usuario = localStorage.getItem("usuarioActivo") || "Invitado";
+  const contenedor = document.getElementById("usuarioActivoMenu");
+  if (contenedor) contenedor.textContent = `👤 Usuario: ${usuario}`;
+}
+
+// Ejecutar al cargar
+mostrarUsuarioActivo();
 
 // Terminal
 

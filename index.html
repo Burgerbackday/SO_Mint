@@ -211,11 +211,12 @@
         return res.json();
       })
       .then(() => {
-        document.getElementById("pantalla-cargando").style.display = "flex";
-        setTimeout(() => {
-          window.location.href = "mint_escritorio_completo.html";
-        }, 1500);
-      })
+  localStorage.setItem("usuarioActivo", usuario);  // ✅ Guarda el usuario
+  document.getElementById("pantalla-cargando").style.display = "flex";
+  setTimeout(() => {
+    window.location.href = "mint_escritorio_completo.html";
+  }, 1500);
+})
       .catch(err => {
         errorBox.textContent = "Contraseña incorrecta.";
         console.error(err);

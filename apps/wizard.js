@@ -6,6 +6,9 @@ function iniciarInstalador(rutaManifest) {
       openWindow("wizard_installer");
 
       const wizard = document.getElementById("wizardBody");
+      const yaInstalada = Array.from(document.querySelectorAll(".app-icon"))
+        .some(icon => icon.innerText.trim() === manifest.title.trim());
+
       wizard.innerHTML = `
         <h2>Instalador de ${manifest.title}</h2>
         <img src="${manifest.icon}" width="64" style="margin: 10px 0;">
@@ -13,6 +16,7 @@ function iniciarInstalador(rutaManifest) {
         <button onclick="finalizarInstalacion('${manifest.script}', '${manifest.key}', '${manifest.icon}', '${manifest.title}')">
           Instalar
         </button>
+        ${yaInstalada ? `<button onclick="desinstalarApp('${manifest.key}', '${manifest.title}')">Desinstalar</button>` : ''}
         <button onclick="closeWindow('wizard_installer')">Cancelar</button>
       `;
     });
@@ -135,3 +139,59 @@ function finalizarInstalacion(scriptPath, appKey, iconPath, title) {
       }
     };
   }
+
+function desinstalarApp(appKey, iconText) {
+  const desktop = document.querySelector(".desktop");
+  const iconList = desktop.querySelectorAll(".app-icon");
+
+  let eliminado = false;
+  iconList.forEach(icon => {
+    if (icon.innerText.trim() === iconText.trim()) {
+      icon.remove();
+      eliminado = true;
+    }
+  });
+
+  if (typeof windowsRegistry !== 'undefined') {
+    delete windowsRegistry[appKey];
+  }
+
+  const scripts = document.querySelectorAll(`script`);
+  scripts.forEach(script => {
+    if (script.src.includes(appKey)) {
+      script.remove();
+    }
+  });
+
+  closeWindow('wizard_installer');
+  alert(eliminado
+    ? `La app "${iconText}" ha sido desinstalada.`
+    : `No se encontró la app "${iconText}" para desinstalar.`);
+}
+
+function abrirCentroDeSoftware() {
+  fetch("manifiestos/apps.json")
+    .then(res => res.json())
+    .then(apps => {
+      renderWindow("wizard_installer");
+      openWindow("wizard_installer");
+
+      const wizard = document.getElementById("wizardBody");
+      wizard.innerHTML = `<h2>Centro de Instalación</h2>`;
+
+      apps.forEach(app => {
+        const yaInstalada = Array.from(document.querySelectorAll(".app-icon"))
+          .some(icon => icon.innerText.trim() === app.title.trim());
+
+        const contenedor = document.createElement("div");
+        contenedor.style.marginBottom = "15px";
+        contenedor.innerHTML = `
+          <img src="${app.icon}" width="48" style="vertical-align:middle"> 
+          <strong style="margin-left:10px">${app.title}</strong><br>
+          <button onclick="iniciarInstalador('${app.manifest}')">Instalar / Gestionar</button>
+          ${yaInstalada ? `<button onclick="desinstalarApp('${app.key}', '${app.title}')">Desinstalar</button>` : ''}
+        `;
+        wizard.appendChild(contenedor);
+      });
+    });
+}
